@@ -4,8 +4,6 @@
 #include <iostream>
 #include "MCell.h"
 
-int clamp(const int min, const int max, int value); // helper function
-
 class Maze
 {
 private:
@@ -22,7 +20,6 @@ public:
 	void buildSteps();
 
 	const MCell &cell(int i, int j) const;
-	void idx_ref_clamp_sort(int& i1, int& j1, int& i2, int& j2); // helper function
 	bool hasConnection(int i1, int j1, int i2, int j2);
 	bool makeConnection(int i1, int j1, int i2, int j2);
 	bool removeConnection(int i1, int j1, int i2, int j2);
