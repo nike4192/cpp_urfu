@@ -69,9 +69,9 @@ bool Maze::makeConnection(int i1, int j1, int i2, int j2)
 
 	MCell* c1 = (MCell*)&cell(i1, j1); // left top cell(min_i, min_j)
 
-	return
-		(c1->m_right = right) ||
-		(c1->m_down  = bottom);
+	if (right)  return c1->m_right =  true;
+	if (bottom) return c1->m_down =  true;
+
 }
 
 bool Maze::removeConnection(int i1, int j1, int i2, int j2)
@@ -84,25 +84,9 @@ bool Maze::removeConnection(int i1, int j1, int i2, int j2)
 	MCell* c1 = (MCell*)&cell(i1, j1); // left top cell(min_i, min_j)
 
 	if (right) return !(c1->m_right = false);
-	if (bottom) return !(c1->m_down  = false);
+	if (bottom) return !(c1->m_down = false);
 
 	return false;
-}
-
-void Maze::buildSteps()
-{
-	int x = 0, y = 0;
-	bool axis_flag = true; // Можно поменять начало: true - по x, false - по y
-
-	while(x < width && y < height)
-	{
-		makeConnection(x, y, x + axis_flag, y + !axis_flag);
-
-		x +=  axis_flag,
-		y += !axis_flag;
-
-		axis_flag = !axis_flag;
-	}
 }
 
 void Maze::printMaze()
