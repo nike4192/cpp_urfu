@@ -19,4 +19,6 @@ int main() {
 	}
 
 	maze->printMaze();
+
+	return 0;
 }
