@@ -44,11 +44,11 @@ void buildTree(Maze* maze, MTreeNode* parent) // i, j [0, +Infinity]
 
 	if (cell.right())
 		if (parent->addChild(i + 1, j))
-			buildTree(maze, (MTreeNode*)parent->child(0));
+			buildTree(maze, (MTreeNode*)parent->hasChild(i + 1, j));
 
 	if (cell.down())
 		if (parent->addChild(i, j + 1))
-			buildTree(maze, (MTreeNode*)parent->child(1));
+			buildTree(maze, (MTreeNode*)parent->hasChild(i, j + 1));
 }
 
 void printWeightTree(MTreeNode* parent, int n, int m, int weight = 0, int* buffer = nullptr) // buffer for recursion: no argument can be passed
@@ -71,15 +71,15 @@ void printWeightTree(MTreeNode* parent, int n, int m, int weight = 0, int* buffe
 		j = parent->j();
 
 	if (parent->childCount() > 0) { // Если есть потомки
-		if (parent->child(0) != nullptr) { // Проход от предка к правому потомку с записью в буффер
-			MTreeNode* childNodeX = (MTreeNode*)parent->child(0);
+		if (parent->hasChild(i + 1, j) != nullptr) { // Проход от предка к правому потомку с записью в буффер
+			MTreeNode* childNodeX = (MTreeNode*)parent->hasChild(i + 1, j);
 			for (int x = i; x < childNodeX->i(); x++)
 				buffer[j * n + x] = weight;
 			printWeightTree(childNodeX, n, m, weight + 1, buffer); // рекурсия
 		}
 
-		if (parent->child(1) != nullptr) { // Проход от предка к нижнему потомку с записью в буффер
-			MTreeNode* childNodeY = (MTreeNode*)parent->child(1);
+		if (parent->hasChild(i, j + 1) != nullptr) { // Проход от предка к нижнему потомку с записью в буффер
+			MTreeNode* childNodeY = (MTreeNode*)parent->hasChild(i, j + 1);
 			for (int y = j; y < childNodeY->j(); y++)
 				buffer[y * n + i] = weight;
 			printWeightTree(childNodeY, n, m, weight + 1, buffer); // рекурсия
@@ -103,12 +103,19 @@ void printWeightTree(MTreeNode* parent, int n, int m, int weight = 0, int* buffe
 
 int main()
 {
+	const int width = 5, height = 5;
+	
 	/* 1 */
-	Maze* maze = new Maze(5, 5);
+	Maze* maze = new Maze(width, height);
 	mazeBuildGridSteps(maze);
 	maze->printMaze();
 
-	std::cout << std::endl; /* DELIMITER */
+	std::cout /* ATTENTION: that piece of code depends on the already output*/
+		<< std::endl // DELIMITER (new line)
+		<< "\033[s" // Save cursor position
+		<< "\033[" << (height + 1) << "A" // Move the cursor up <height + 1> lines, because the first character <std::endl> printed
+		<< "0" // Insert 0
+		<< "\033[u"; // Restore cursor position
 
 	/* 2 */
 	MTreeNode* treeRoot = MTreeNode::beginTree(0, 0);
