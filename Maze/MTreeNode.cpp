@@ -5,15 +5,22 @@ MTreeNode::MTreeNode(MTreeNode * parent = nullptr)
 {
 	m_parent = parent;
 
-	m_children[0] = nullptr;
-	m_children[1] = nullptr;
+	int m_children_length =
+		sizeof(m_children) /
+		sizeof(*m_children);
+
+	for (int i = 0; i < m_children_length; i++)
+		m_children[i] = nullptr; // IMPORTANT: to check nullptr
 }
 
 MTreeNode::~MTreeNode()
 {
-	delete m_children[0];
-	delete m_children[1];
+	int m_children_length =
+		sizeof(m_children) /
+		sizeof(*m_children);
 
+	for (int i = 0; i < m_children_length; i++)
+		delete m_children[i];
 	delete[] m_children;
 }
 
@@ -27,23 +34,29 @@ int MTreeNode::distance() const { return m_distance; }
 
 int MTreeNode::childCount() const
 {
-	return
-		(m_children[0] != nullptr) +
-		(m_children[1] != nullptr);
+	int child_count = 0;
+
+	int m_children_length =
+		sizeof(m_children) /
+		sizeof(*m_children);
+
+	for (int i = 0; i < m_children_length; i++)
+		if (m_children[i] != nullptr)
+			child_count++;
+
+	return child_count;
 }
 
 bool MTreeNode::addChild(int i, int j)
 {
-	MTreeNode* child = new MTreeNode(this);
-	child->m_i = i;
-	child->m_j = j;
+	MTreeNode* child = MTreeNode::beginTree(i, j);
 	
-	if (m_i == i || m_j == j) {
-		int axis = m_j == j ? 0 : 1;
+	if ((m_i == i) ^ (m_j == j)) {
+		int axis = m_j == j ? 0 : 1; // ATTENTION: implemented for only TWO children, by x and y axis
 		
 		delete m_children[axis];
 
-		child->m_distance = i - m_i ^ j - m_j;
+		child->m_distance = (i - m_i) ^ (j - m_j);
 		m_children[axis] = child;
 		return true;
 	}
@@ -53,8 +66,17 @@ bool MTreeNode::addChild(int i, int j)
 
 MTreeNode * MTreeNode::hasChild(int i, int j)
 {
-	if (m_i == i) return m_children[0];
-	if (m_j == j) return m_children[1];
+	int children_count =
+		sizeof(m_children) /
+		sizeof(*m_children);
+
+	for (int k = 0; k < children_count; k++) {
+		MTreeNode* node = m_children[k];
+		if (node != nullptr &&
+			node->i() == i &&
+			node->j() == j)
+			return node;
+	}
 
 	return nullptr;
 }
