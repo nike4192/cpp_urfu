@@ -1,7 +1,9 @@
 #include <iostream>
 
 #include "Maze.h"
-void mazeBuildSteps(Maze* maze) {
+
+int main() {
+	Maze* maze = new Maze(5, 5);
 
 	int x = 0, y = 0;
 	bool axis_flag = true; // Можно поменять начало: true - по x, false - по y
@@ -15,9 +17,6 @@ void mazeBuildSteps(Maze* maze) {
 
 		axis_flag = !axis_flag;
 	}
-}
-int main() {
-	Maze* maze = new Maze(5, 5);
-	mazeBuildSteps(maze);
+
 	maze->printMaze();
 }
